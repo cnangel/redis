@@ -43,6 +43,16 @@ start_server {tags {"bitops"}} {
         r bitcount no-key
     } 0
 
+    test {BITCOUNT returns 0 with out of range indexes} {
+        r set str "xxxx"
+        r bitcount str 4 10
+    } 0
+
+    test {BITCOUNT returns 0 with negative indexes where start > end} {
+        r set str "xxxx"
+        r bitcount str -6 -7
+    } 0
+
     catch {unset num}
     foreach vec [list "" "\xaa" "\x00\x00\xff" "foobar" "123"] {
         incr num
@@ -88,7 +98,7 @@ start_server {tags {"bitops"}} {
     } {ERR*syntax*}
 
     test {BITCOUNT regression test for github issue #582} {
-        r del str
+        r del foo
         r setbit foo 0 1
         if {[catch {r bitcount foo 0 4294967296} e]} {
             assert_match {*ERR*out of range*} $e

@@ -290,6 +290,12 @@ start_server {tags {"zset"}} {
             assert_equal  6 [r zscore zset bar]
         }
 
+        test "ZINCRBY return value" {
+            r del ztmp
+            set retval [r zincrby ztmp 1.0 x]
+            assert {$retval == 1.0}
+        }
+
         proc create_default_zset {} {
             create_zset zset {-inf a 1 b 2 c 3 d 4 e 5 f +inf g}
         }
@@ -688,6 +694,10 @@ start_server {tags {"zset"}} {
             assert {$score >= $oldscore}
             set oldscore $score
         }
+    }
+
+    test "ZSET commands don't accept the empty strings as valid score" {
+        assert_error "*not*float*" {r zadd myzset "" abc}
     }
 
     proc stressers {encoding} {

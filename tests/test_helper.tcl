@@ -26,6 +26,8 @@ set ::all_tests {
     unit/type/set
     unit/type/zset
     unit/type/hash
+    unit/type/stream
+    unit/type/stream-cgroups
     unit/sort
     unit/expire
     unit/other
@@ -41,18 +43,23 @@ set ::all_tests {
     integration/rdb
     integration/convert-zipmap-hash-on-load
     integration/logging
+    integration/psync2
+    integration/psync2-reg
     unit/pubsub
     unit/slowlog
     unit/scripting
     unit/maxmemory
     unit/introspection
+    unit/introspection-2
     unit/limits
     unit/obuf-limits
     unit/bitops
     unit/bitfield
+    unit/geo
     unit/memefficiency
     unit/hyperloglog
     unit/lazyfree
+    unit/wait
 }
 # Index to the next test to run in the ::all_tests list.
 set ::next_test 0
@@ -446,6 +453,8 @@ for {set j 0} {$j < [llength $argv]} {incr j} {
             puts $t
         }
         exit 0
+    } elseif {$opt eq {--verbose}} {
+        set ::verbose 1
     } elseif {$opt eq {--client}} {
         set ::client 1
         set ::test_server_port $arg
